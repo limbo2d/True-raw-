@@ -1,0 +1,1325 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">  
+  <meta name="apple-mobile-web-app-capable" content="yes">  
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+  <meta name="apple-mobile-web-app-title" content="Цикл V2 · True Raw">  
+  <meta name="theme-color" content="#000000">  
+  <title>Цикл V2 · True Raw</title>  
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Цикл V2 · True Raw","short_name":"Цикл V2","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}'>  
+  <style>  
+    :root {  
+      --bg: #000000;  
+      --card: #151518;  
+      --card-elevated: #222227;  
+      --border: #2E2E34;  
+      --text: #FFFFFF;  
+      --text-sec: #9898A0;  
+      --accent: #FF453A;  
+      --accent-soft: rgba(255, 69, 58, 0.16);  
+      --blue: #0A84FF;  
+      --blue-soft: rgba(10, 132, 255, 0.16);  
+      --green: #30D158;  
+      --amber: #FFD60A;  
+      --safe-top: env(safe-area-inset-top, 44px);  
+      --safe-bottom: env(safe-area-inset-bottom, 24px);  
+    }  
+  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+      -webkit-tap-highlight-color: transparent;  
+    }  
+  
+    body {  
+      background-color: var(--bg);  
+      color: var(--text);  
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;  
+      padding-top: calc(var(--safe-top) + 8px);  
+      padding-bottom: calc(var(--safe-bottom) + 140px);  
+      line-height: 1.4;  
+      overflow-x: hidden;  
+      -webkit-user-select: none;  
+      user-select: none;  
+    }  
+  
+    input, textarea {  
+      -webkit-user-select: text;  
+      user-select: text;  
+      font-family: inherit;  
+    }  
+  
+    .app-header {  
+      padding: 10px 16px 12px;  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      position: sticky;  
+      top: 0;  
+      z-index: 50;  
+      background: rgba(0, 0, 0, 0.86);  
+      backdrop-filter: blur(20px);  
+      -webkit-backdrop-filter: blur(20px);  
+      border-bottom: 1px solid var(--border);  
+    }  
+    .header-title h1 {  
+      font-size: 19px;  
+      font-weight: 800;  
+      letter-spacing: -0.4px;  
+    }  
+    .save-status {  
+      font-size: 11px;  
+      color: var(--green);  
+      font-weight: 600;  
+    }  
+    .icon-btn {  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      color: var(--text);  
+      padding: 8px 12px;  
+      border-radius: 10px;  
+      font-size: 12px;  
+      font-weight: 700;  
+      cursor: pointer;  
+      touch-action: manipulation;  
+    }  
+    .icon-btn:active {  
+      opacity: 0.7;  
+      transform: scale(0.97);  
+    }  
+  
+    .container {  
+      padding: 14px 14px 0;  
+      max-width: 540px;  
+      margin: 0 auto;  
+    }  
+  
+    .segmented-row {  
+      display: grid;  
+      grid-template-columns: repeat(4, 1fr);  
+      background: var(--card);  
+      padding: 4px;  
+      border-radius: 12px;  
+      margin-bottom: 10px;  
+      border: 1px solid var(--border);  
+      gap: 4px;  
+    }  
+    .seg-btn {  
+      background: transparent;  
+      border: none;  
+      color: var(--text-sec);  
+      padding: 8px 2px;  
+      border-radius: 9px;  
+      font-size: 13px;  
+      font-weight: 700;  
+      cursor: pointer;  
+      text-align: center;  
+      touch-action: manipulation;  
+    }  
+    .seg-btn span {  
+      display: block;  
+      font-size: 10px;  
+      font-weight: 500;  
+      opacity: 0.85;  
+      margin-top: 1px;  
+    }  
+    .seg-btn.active {  
+      background: var(--card-elevated);  
+      color: var(--text);  
+    }  
+    .seg-btn.active.w-active {  
+      background: var(--accent);  
+      color: #fff;  
+    }  
+  
+    .week-banner {  
+      background: linear-gradient(145deg, #1E1E24 0%, #131316 100%);  
+      border: 1px solid var(--border);  
+      border-radius: 16px;  
+      padding: 14px 16px;  
+      margin-bottom: 14px;  
+    }  
+    .week-banner-top {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      margin-bottom: 6px;  
+    }  
+    .week-badge {  
+      font-size: 11px;  
+      font-weight: 700;  
+      text-transform: uppercase;  
+      padding: 3px 8px;  
+      border-radius: 6px;  
+      background: var(--accent-soft);  
+      color: var(--accent);  
+    }  
+    .week-banner h2 {  
+      font-size: 16px;  
+      font-weight: 800;  
+      margin-bottom: 3px;  
+    }  
+    .week-banner p {  
+      font-size: 12px;  
+      color: var(--text-sec);  
+    }  
+  
+    .progress-wrap {  
+      margin-top: 10px;  
+      display: flex;  
+      align-items: center;  
+      gap: 10px;  
+    }  
+    .progress-bar-bg {  
+      flex: 1;  
+      height: 7px;  
+      background: var(--card-elevated);  
+      border-radius: 4px;  
+      overflow: hidden;  
+    }  
+    .progress-bar-fill {  
+      height: 100%;  
+      background: var(--green);  
+      width: 0%;  
+      transition: width 0.25s ease;  
+    }  
+    .progress-text {  
+      font-size: 12px;  
+      color: var(--text);  
+      font-weight: 700;  
+      min-width: 38px;  
+      text-align: right;  
+    }  
+  
+    .ex-card {  
+      background: var(--card);  
+      border: 1px solid var(--border);  
+      border-radius: 16px;  
+      padding: 14px;  
+      margin-bottom: 12px;  
+    }  
+    .ex-card.done-card {  
+      border-color: rgba(48, 209, 88, 0.5);  
+      background: rgba(20, 30, 23, 0.85);  
+    }  
+    .ex-header {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: flex-start;  
+      gap: 8px;  
+      margin-bottom: 10px;  
+    }  
+    .ex-title {  
+      font-size: 15.5px;  
+      font-weight: 800;  
+    }  
+    .ex-tag {  
+      font-size: 10.5px;  
+      font-weight: 700;  
+      padding: 3px 8px;  
+      border-radius: 6px;  
+      white-space: nowrap;  
+    }  
+    .tag-top { background: var(--accent-soft); color: var(--accent); }  
+    .tag-bo { background: var(--blue-soft); color: var(--blue); }  
+    .tag-acc { background: rgba(255,255,255,0.08); color: var(--text-sec); }  
+  
+    .ex-metrics {  
+      display: grid;  
+      grid-template-columns: repeat(4, 1fr);  
+      gap: 6px;  
+      background: rgba(0,0,0,0.4);  
+      padding: 9px;  
+      border-radius: 12px;  
+      margin-bottom: 10px;  
+    }  
+    .metric-box {  
+      text-align: center;  
+    }  
+    .metric-label {  
+      font-size: 9.5px;  
+      color: var(--text-sec);  
+      text-transform: uppercase;  
+      display: block;  
+    }  
+    .metric-val {  
+      font-size: 14px;  
+      font-weight: 800;  
+      margin-top: 2px;  
+      display: block;  
+    }  
+    .metric-val.highlight {  
+      color: var(--amber);  
+    }  
+  
+    .ex-note {  
+      font-size: 12px;  
+      color: var(--text-sec);  
+      margin-bottom: 10px;  
+      padding-left: 8px;  
+      border-left: 2px solid var(--border);  
+    }  
+  
+    .fact-log-row {  
+      display: grid;  
+      grid-template-columns: 1fr 1fr;  
+      gap: 8px;  
+      margin-bottom: 10px;  
+    }  
+    .fact-input-wrap {  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      border-radius: 10px;  
+      padding: 6px 10px;  
+      display: flex;  
+      align-items: center;  
+      justify-content: space-between;  
+    }  
+    .fact-input-wrap label {  
+      font-size: 11px;  
+      color: var(--text-sec);  
+      font-weight: 600;  
+    }  
+    .fact-input-wrap input {  
+      width: 72px;  
+      background: transparent;  
+      border: none;  
+      color: var(--amber);  
+      font-size: 14px;  
+      font-weight: 800;  
+      text-align: right;  
+      outline: none;  
+    }  
+  
+    .warmup-toggle {  
+      background: var(--blue-soft);  
+      border: none;  
+      color: var(--blue);  
+      padding: 6px 10px;  
+      border-radius: 8px;  
+      font-size: 12px;  
+      font-weight: 700;  
+      cursor: pointer;  
+      margin-bottom: 10px;  
+      display: inline-block;  
+      touch-action: manipulation;  
+    }  
+    .warmup-chips {  
+      display: none;  
+      flex-wrap: wrap;  
+      gap: 6px;  
+      margin-bottom: 10px;  
+    }  
+    .warmup-chips.open {  
+      display: flex;  
+    }  
+    .w-chip {  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      padding: 5px 9px;  
+      border-radius: 8px;  
+      font-size: 11.5px;  
+      font-weight: 700;  
+      color: var(--text);  
+    }  
+  
+    .sets-row {  
+      display: flex;  
+      flex-wrap: wrap;  
+      gap: 8px;  
+    }  
+    .set-pill {  
+      flex: 1;  
+      min-width: 68px;  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      color: var(--text);  
+      padding: 10px 6px;  
+      border-radius: 10px;  
+      font-size: 12.5px;  
+      font-weight: 700;  
+      text-align: center;  
+      cursor: pointer;  
+      touch-action: manipulation;  
+    }  
+    .set-pill:active {  
+      transform: scale(0.96);  
+    }  
+    .set-pill.checked {  
+      background: var(--green);  
+      border-color: var(--green);  
+      color: #000;  
+    }  
+  
+    .day-notes-card {  
+      background: var(--card);  
+      border: 1px solid var(--border);  
+      border-radius: 16px;  
+      padding: 14px;  
+      margin-top: 6px;  
+      margin-bottom: 16px;  
+    }  
+    .day-notes-card label {  
+      display: block;  
+      font-size: 13px;  
+      font-weight: 700;  
+      margin-bottom: 8px;  
+    }  
+    .day-notes-card textarea {  
+      width: 100%;  
+      min-height: 76px;  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      border-radius: 10px;  
+      padding: 10px;  
+      color: var(--text);  
+      font-size: 13px;  
+      resize: vertical;  
+      outline: none;  
+    }  
+  
+    .section-card {  
+      background: var(--card);  
+      border: 1px solid var(--border);  
+      border-radius: 16px;  
+      padding: 16px;  
+      margin-bottom: 14px;  
+    }  
+    .section-card h3 {  
+      font-size: 16px;  
+      font-weight: 800;  
+      margin-bottom: 10px;  
+    }  
+    .data-table {  
+      width: 100%;  
+      border-collapse: collapse;  
+      font-size: 13px;  
+    }  
+    .data-table th, .data-table td {  
+      padding: 9px 6px;  
+      text-align: left;  
+      border-bottom: 1px solid var(--border);  
+    }  
+    .data-table th {  
+      color: var(--text-sec);  
+      font-size: 11px;  
+      text-transform: uppercase;  
+    }  
+    .cue-list {  
+      list-style: none;  
+    }  
+    .cue-list li {  
+      font-size: 13px;  
+      color: var(--text-sec);  
+      margin-bottom: 8px;  
+      padding-left: 12px;  
+      position: relative;  
+    }  
+    .cue-list li strong {  
+      color: var(--text);  
+    }  
+    .cue-list li::before {  
+      content: "•";  
+      color: var(--accent);  
+      position: absolute;  
+      left: 0;  
+      font-weight: bold;  
+    }  
+  
+    .timer-bar {  
+      position: fixed;  
+      bottom: calc(var(--safe-bottom) + 62px);  
+      left: 12px;  
+      right: 12px;  
+      max-width: 516px;  
+      margin: 0 auto;  
+      background: rgba(26, 26, 30, 0.95);  
+      backdrop-filter: blur(16px);  
+      -webkit-backdrop-filter: blur(16px);  
+      border: 1px solid var(--border);  
+      border-radius: 16px;  
+      padding: 10px 14px;  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      z-index: 90;  
+      box-shadow: 0 8px 24px rgba(0,0,0,0.65);  
+    }  
+    .timer-display {  
+      font-size: 20px;  
+      font-weight: 800;  
+      font-variant-numeric: tabular-nums;  
+    }  
+    .timer-display.active-timer {  
+      color: var(--green);  
+    }  
+    .timer-btns {  
+      display: flex;  
+      gap: 6px;  
+    }  
+    .t-btn {  
+      background: var(--card-elevated);  
+      border: 1px solid var(--border);  
+      color: var(--text);  
+      padding: 7px 10px;  
+      border-radius: 8px;  
+      font-size: 12px;  
+      font-weight: 700;  
+      cursor: pointer;  
+      touch-action: manipulation;  
+    }  
+    .t-btn.stop {  
+      background: var(--accent-soft);  
+      color: var(--accent);  
+      border-color: transparent;  
+    }  
+  
+    .tab-bar {  
+      position: fixed;  
+      bottom: 0;  
+      left: 0;  
+      right: 0;  
+      height: calc(58px + var(--safe-bottom));  
+      padding-bottom: var(--safe-bottom);  
+      background: rgba(16, 16, 18, 0.94);  
+      backdrop-filter: blur(20px);  
+      -webkit-backdrop-filter: blur(20px);  
+      border-top: 1px solid var(--border);  
+      display: flex;  
+      justify-content: space-around;  
+      align-items: center;  
+      z-index: 100;  
+    }  
+    .tab-item {  
+      background: none;  
+      border: none;  
+      color: var(--text-sec);  
+      font-size: 11px;  
+      font-weight: 700;  
+      display: flex;  
+      flex-direction: column;  
+      align-items: center;  
+      gap: 2px;  
+      cursor: pointer;  
+      flex: 1;  
+      padding: 6px 0;  
+      touch-action: manipulation;  
+    }  
+    .tab-item.active {  
+      color: var(--accent);  
+    }  
+    .tab-icon {  
+      font-size: 18px;  
+    }  
+  
+    .view-panel { display: none; }  
+    .view-panel.active { display: block; }  
+  
+    @media print {  
+      body { background: #fff; color: #000; padding: 0; }  
+      .app-header, .timer-bar, .tab-bar, .segmented-row { display: none !important; }  
+      .view-panel { display: block !important; }  
+      .ex-card, .section-card, .week-banner {  
+        background: #fff !important;  
+        color: #000 !important;  
+        border: 1px solid #ccc !important;  
+        page-break-inside: avoid;  
+      }  
+      .metric-val, .ex-title, h2, h3 { color: #000 !important; }  
+    }  
+  </style>  
+</head>  
+<body>  
+  
+  <header class="app-header">  
+    <div class="header-title">  
+      <h1>Цикл V2 · True Raw</h1>  
+      <div class="save-status" id="save-indicator">● Автосохранение активно</div>  
+    </div>  
+    <button type="button" class="icon-btn" id="btn-print">PDF / Печать</button>  
+  </header>  
+  
+  <main class="container">  
+    <!-- TAB 1: WORKOUTS -->  
+    <section id="view-workouts" class="view-panel active">  
+      <div class="segmented-row" id="week-tabs">  
+        <button type="button" class="seg-btn" data-week="W1">W1<span>Вкатка</span></button>  
+        <button type="button" class="seg-btn" data-week="W2">W2<span>Объём</span></button>  
+        <button type="button" class="seg-btn" data-week="W3">W3<span>Пик</span></button>  
+        <button type="button" class="seg-btn" data-week="W4">W4<span>Делид</span></button>  
+      </div>  
+  
+      <div class="segmented-row" id="day-tabs">  
+        <button type="button" class="seg-btn" data-day="D1">D1 · Пн<span>Присед Об</span></button>  
+        <button type="button" class="seg-btn" data-day="D2">D2 · Вт<span>Сумо + Глуб</span></button>  
+        <button type="button" class="seg-btn" data-day="D3">D3 · Чт<span>Тяж S + B</span></button>  
+        <button type="button" class="seg-btn" data-day="D4">D4 · Сб<span>Тяж Сумо</span></button>  
+      </div>  
+  
+      <div class="week-banner">  
+        <div class="week-banner-top">  
+          <span class="week-badge" id="banner-rpe">RPE 6.5–7.5</span>  
+          <span style="font-size:12px; color:var(--text-sec); font-weight:700;" id="banner-day-code">W1 · D1</span>  
+        </div>  
+        <h2 id="banner-title">Понедельник</h2>  
+        <p id="banner-desc">Описание дня</p>  
+        <div class="progress-wrap">  
+          <div class="progress-bar-bg">  
+            <div class="progress-bar-fill" id="day-progress-fill"></div>  
+          </div>  
+          <span class="progress-text" id="day-progress-text">0%</span>  
+        </div>  
+      </div>  
+  
+      <div id="exercises-list"></div>  
+  
+      <div class="day-notes-card">  
+        <label for="day-notes-input">📝 Заметки к тренировке (сохраняются автоматически):</label>  
+        <textarea id="day-notes-input" placeholder="Скорость штанги, самочувствие локтей, приводящих и поясницы..."></textarea>  
+      </div>  
+    </section>  
+  
+    <!-- TAB 2: RPE & WARMUP CALCULATOR -->  
+    <section id="view-rpe" class="view-panel">  
+      <div class="section-card">  
+        <h3>Калькулятор разминки к топ-сету</h3>  
+        <p style="font-size:12px; color:var(--text-sec); margin-bottom:10px;">  
+          40%×5, 60%×3, 75%×2, 85%×1, 92%×1 от веса топ-сета (округление до 2.5 кг).  
+        </p>  
+        <div style="display:flex; gap:10px; margin-bottom:12px;">  
+          <input type="number" id="calc-input" value="137.5" step="2.5"  
+            style="flex:1; background:var(--card-elevated); border:1px solid var(--border); color:#fff; padding:10px 12px; border-radius:10px; font-size:16px; font-weight:700;">  
+          <button type="button" class="icon-btn" id="btn-calc">Рассчитать</button>  
+        </div>  
+        <div id="calc-output" style="display:flex; flex-wrap:wrap; gap:8px;"></div>  
+      </div>  
+  
+      <div class="section-card">  
+        <h3>Вес сингла по RPE (Базы: 150 / 122.5 / 190 кг)</h3>  
+        <p style="font-size:12px; color:var(--text-sec); margin-bottom:8px;">  
+          Если сингл вышел на другом RPE, меняй вес по таблице (округление до 2.5 кг):  
+        </p>  
+        <table class="data-table">  
+          <thead>  
+            <tr>  
+              <th>Целевой RPE</th>  
+              <th>Присед, кг</th>  
+              <th>Жим, кг</th>  
+              <th>Сумо, кг</th>  
+            </tr>  
+          </thead>  
+          <tbody>  
+            <tr><td><strong>RPE 7.0</strong></td><td>135.0</td><td>110.0</td><td>170.0</td></tr>  
+            <tr><td><strong>RPE 8.0</strong></td><td>137.5</td><td>112.5</td><td>175.0</td></tr>  
+            <tr><td><strong>RPE 8.5</strong></td><td>140.0</td><td>115.0</td><td>177.5</td></tr>  
+            <tr><td><strong>RPE 9.0</strong></td><td>142.5</td><td>117.5</td><td>182.5</td></tr>  
+          </tbody>  
+        </table>  
+      </div>  
+  
+      <div class="section-card">  
+        <h3>Правила автокоррекции</h3>  
+        <ul class="cue-list">  
+          <li><strong>Перебор RPE (+1 и выше):</strong> вес следующих сетов и следующей недели снижаем на 2.5–5 кг.</li>  
+          <li><strong>Запас RPE (−1 и ниже):</strong> следующий топ-сет поднимаем на 2.5–5 кг (на жиме только +2.5 кг).</li>  
+          <li><strong>Утомление на бэк-оффах:</strong> бэк-оффы идут примерно на 0.5 RPE тяжелее расчётных из-за усталости от топ-сета — это норма.</li>  
+          <li><strong>Стоп-сигнал:</strong> острая боль в локтях, предплечьях, приводящих, коленях или пояснице либо потеря техники на двух повторах подряд — заканчиваем сет и день.</li>  
+        </ul>  
+      </div>  
+    </section>  
+  
+    <!-- TAB 3: TECH CUES & MEMORY MANAGEMENT -->  
+    <section id="view-tech" class="view-panel">  
+      <div class="section-card">  
+        <h3>Управление памятью и Бэкап</h3>  
+        <p style="font-size:12px; color:var(--text-sec); margin-bottom:12px;">  
+          Все данные хранятся в изолированном ключе `tr_v2_cycle_state`. Сброс очищает только эту программу и не трогает другие приложения на твоём GitHub Pages.  
+        </p>  
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">  
+          <button type="button" class="icon-btn" id="btn-export" style="background:var(--blue); border-color:var(--blue);">Скопировать бэкап</button>  
+          <button type="button" class="icon-btn" id="btn-import">Загрузить бэкап</button>  
+          <button type="button" class="icon-btn" id="btn-reset" style="background:var(--accent-soft); color:var(--accent); border-color:transparent;">Сбросить всё</button>  
+        </div>  
+        <textarea id="backup-textarea" placeholder="Поле для JSON-кода резервной копии..." style="width:100%; height:64px; background:var(--card-elevated); border:1px solid var(--border); color:#fff; border-radius:10px; padding:8px; font-size:11px;"></textarea>  
+      </div>  
+  
+      <div class="section-card">  
+        <h3>Исходные данные плана</h3>  
+        <table class="data-table">  
+          <thead>  
+            <tr>  
+              <th>Лифт</th>  
+              <th>Факт теста</th>  
+              <th>База плана</th>  
+            </tr>  
+          </thead>  
+          <tbody>  
+            <tr><td><strong>Присед (лоу-бар)</strong></td><td>145 кг @6 (логи: 127–141)</td><td>150.0 кг</td></tr>  
+            <tr><td><strong>Жим с паузой 2 с</strong></td><td>115 кг @8.5</td><td>122.5 кг</td></tr>  
+            <tr><td><strong>Тяга сумо</strong></td><td>190 кг @10</td><td>190.0 кг</td></tr>  
+          </tbody>  
+        </table>  
+      </div>  
+  
+      <div class="section-card">  
+        <h3>Технические акценты True Raw</h3>  
+        <ul class="cue-list">  
+          <li><strong>Присед (лоу-бар):</strong> вдох в живот на 360°, рёбра над тазом, спуск под контролем 2 с (без наколенников пружины нет), опора на 3 точки стопы, без отскока в нижней точке.</li>  
+          <li><strong>Глубокий присед (D2):</strong> лёгкий третий присед недели сразу после сумо (отдых 3 мин). Техника и глубина без подворота таза (95→97.5→100 кг). При ноющих приводящих или коленях убираем из D2.</li>  
+          <li><strong>Узкий жим (D1) и Жим 2 с:</strong> в узком жиме хват примерно на ширину плеч, мягкая фиксация 0.5–1 с на груди (бережем локти). В соревновательном жиме — честная пауза 2 с («раз-два») на груди.</li>  
+          <li><strong>Тяга сумо (локаут):</strong> выбираем слабину до включения рук, раздвигаем пол стопами. Когда гриф прошёл колени — таз к грифу, ягодицы сжаты, рёбра над тазом, фиксация локаута 1 с.</li>  
+        </ul>  
+      </div>  
+  
+      <div class="section-card">  
+        <h3>Недельный объём повторений (W1–W4)</h3>  
+        <table class="data-table">  
+          <thead>  
+            <tr>  
+              <th>Лифт</th>  
+              <th>W1</th>  
+              <th>W2</th>  
+              <th>W3</th>  
+              <th>W4 (Делид)</th>  
+            </tr>  
+          </thead>  
+          <tbody>  
+            <tr><td><strong>Присед (все)</strong></td><td>34</td><td>38</td><td>31</td><td>18 (−42%)</td></tr>  
+            <tr><td><strong>Жим (все)</strong></td><td>45</td><td>49</td><td>41</td><td>25 (−39%)</td></tr>  
+            <tr><td><strong>Тяга сумо</strong></td><td>19</td><td>22</td><td>16</td><td>10 (−38%)</td></tr>  
+          </tbody>  
+        </table>  
+      </div>  
+    </section>  
+  </main>  
+  
+  <!-- Floating Rest Timer -->  
+  <div class="timer-bar">  
+    <div>  
+      <span style="font-size:10px; color:var(--text-sec); text-transform:uppercase; display:block;">Таймер отдыха</span>  
+      <div class="timer-display" id="timer-val">00:00</div>  
+    </div>  
+    <div class="timer-btns">  
+      <button type="button" class="t-btn" data-sec="90">1:30</button>  
+      <button type="button" class="t-btn" data-sec="180">3:00</button>  
+      <button type="button" class="t-btn" data-sec="240">4:00</button>  
+      <button type="button" class="t-btn stop" id="btn-timer-stop">Сброс</button>  
+    </div>  
+  </div>  
+  
+  <!-- Bottom Navigation -->  
+  <nav class="tab-bar">  
+    <button type="button" class="tab-item active" data-view="workouts">  
+      <span class="tab-icon">🏋️‍♂️</span>  
+      <span>План W1–W4</span>  
+    </button>  
+    <button type="button" class="tab-item" data-view="rpe">  
+      <span class="tab-icon">⚡</span>  
+      <span>Разминка & RPE</span>  
+    </button>  
+    <button type="button" class="tab-item" data-view="tech">  
+      <span class="tab-icon">💾</span>  
+      <span>База & Память</span>  
+    </button>  
+  </nav>  
+  
+  <script>  
+    const STORAGE_KEY = 'tr_v2_cycle_state';  
+  
+    const DEFAULT_STATE = {  
+      week: 'W1',  
+      day: 'D1',  
+      checks: {},  
+      logs: {},  
+      notes: {},  
+      openWarmups: {},  
+      calcWeight: 137.5,  
+      timerEndTime: null  
+    };  
+  
+    function normalizeState(raw) {  
+      const validWeeks = ['W1', 'W2', 'W3', 'W4'];  
+      const validDays = ['D1', 'D2', 'D3', 'D4'];  
+      const s = (raw && typeof raw === 'object') ? raw : {};  
+      return {  
+        week: validWeeks.includes(s.week) ? s.week : DEFAULT_STATE.week,  
+        day: validDays.includes(s.day) ? s.day : DEFAULT_STATE.day,  
+        checks: (s.checks && typeof s.checks === 'object' && !Array.isArray(s.checks)) ? s.checks : {},  
+        logs: (s.logs && typeof s.logs === 'object' && !Array.isArray(s.logs)) ? s.logs : {},  
+        notes: (s.notes && typeof s.notes === 'object' && !Array.isArray(s.notes)) ? s.notes : {},  
+        openWarmups: (s.openWarmups && typeof s.openWarmups === 'object' && !Array.isArray(s.openWarmups)) ? s.openWarmups : {},  
+        calcWeight: (typeof s.calcWeight === 'number' && !isNaN(s.calcWeight)) ? s.calcWeight : DEFAULT_STATE.calcWeight,  
+        timerEndTime: (typeof s.timerEndTime === 'number') ? s.timerEndTime : null  
+      };  
+    }  
+  
+    const SafeStorage = {  
+      mem: null,  
+      load() {  
+        try {  
+          const raw = window.localStorage.getItem(STORAGE_KEY);  
+          const parsed = raw ? JSON.parse(raw) : DEFAULT_STATE;  
+          this.mem = normalizeState(parsed);  
+          return this.mem;  
+        } catch (e) {  
+          this.mem = normalizeState(this.mem || DEFAULT_STATE);  
+          return this.mem;  
+        }  
+      },  
+      save(stateObj) {  
+        this.mem = normalizeState(stateObj);  
+        try {  
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.mem));  
+          flashSaveIndicator("● Сохранено в память ✓");  
+        } catch (e) {  
+          flashSaveIndicator("● Локальный режим");  
+        }  
+      },  
+      removeOnlyThisApp() {  
+        this.mem = normalizeState(DEFAULT_STATE);  
+        try {  
+          window.localStorage.removeItem(STORAGE_KEY);  
+        } catch (e) {}  
+      }  
+    };  
+  
+    function flashSaveIndicator(msg) {  
+      const el = document.getElementById('save-indicator');  
+      if (!el) return;  
+      el.textContent = msg;  
+      el.style.color = "#30D158";  
+    }  
+  
+    const programData = {  
+      W1: {  
+        rpe: "W1 · Вкатывание (RPE 6.5–7.5)",  
+        desc: "Восходящая неделя: Пн (Объём) → Вт (Сумо + Глубокий присед) → Чт (Тяж Присед и Жим) → Сб (Тяж Сумо).",  
+        days: {  
+          D1: {  
+            title: "Пн · Присед (объём) + Узкий жим (объём)",  
+            exercises: [  
+              { name: "Присед (лоу-бар)", tag: "Объём", tagType: "tag-bo", sets: 3, reps: "5", kg: 117.5, pct: "78%", rpe: "7", note: "Плавный вход в неделю после выходных (база 150 кг). Брейс 360°, спуск 2 с." },  
+              { name: "Узкий жим (хват на ширину плеч)", tag: "Объём", tagType: "tag-bo", sets: 4, reps: "5", kg: 82.5, pct: "—", rpe: "6–6.5", note: "Локти 30–45° к корпусу, мягкая фиксация 0.5–1 с на груди. Если RPE ≤ 5 — добавь 2.5 кг." },  
+              { name: "Тяга гантели с упором грудью", tag: "Спина", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "Чистое сведение лопатки без читинга поясницей." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "20 м", kg: 24, pct: "—", rpe: "—", note: "Плечи ровно, рёбра над тазом, шаг короткий." }  
+            ]  
+          },  
+          D2: {  
+            title: "Вт · Тяга сумо (объём) + Глубокий присед + Гири",  
+            exercises: [  
+              { name: "Тяга сумо", tag: "Объём", tagType: "tag-bo", sets: 4, reps: "3", kg: 157.5, pct: "83%", rpe: "6.5–7", note: "Выбираем слабину до включения рук, фиксация локаута 1 с.", isTop: true },  
+              { name: "Глубокий присед (после сумо)", tag: "Техника", tagType: "tag-acc", sets: 2, reps: "3", kg: 95, pct: "—", rpe: "5–5.5", note: "Отдых после сумо 3 мин. Полная глубина без подворота таза." },  
+              { name: "Heavy Swings", tag: "Локаут", tagType: "tag-acc", sets: 5, reps: "8", kg: 24, pct: "—", rpe: "—", note: "Движение от таза, наверху ягодицы сжаты, корпус прямой." },  
+              { name: "Гиперэкстензия 45° (пауза 2 с наверху)", tag: "Разгибатели", tagType: "tag-acc", sets: 3, reps: "8", kg: "Вес тела", pct: "—", rpe: "—", note: "Фиксация 2 с в верхней точке без переразгибания." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "5", kg: 12, pct: "—", rpe: "—", note: "Гиря дном вверх, запястье нейтрально, лопатка вниз." }  
+            ]  
+          },  
+          D3: {  
+            title: "Чт · Присед (тяжёлый) + Жим с паузой (тяжёлый)",  
+            exercises: [  
+              { name: "Присед (лоу-бар) · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 132.5, pct: "88%", rpe: "6.5–7", note: "База 150 кг. Грудь и таз поднимаются синхронно.", isTop: true },  
+              { name: "Присед · Бэк-оффы (−8% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 3, reps: "4", kg: 122.5, pct: "82%", rpe: "7", note: "Полноценный силовой объём 82% от базы 150 кг." },  
+              { name: "Жим с паузой 2 с · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 110, pct: "90%", rpe: "7", note: "Считаем «раз-два» на груди, жмём под себя к дельтам.", isTop: true },  
+              { name: "Жим · Бэк-оффы (−9% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 3, reps: "4", kg: 100, pct: "82%", rpe: "7–7.5", note: "Локти не разворачиваем на выходе, шаг веса не более 2.5 кг." },  
+              { name: "Лицевая тяга (резина/блок)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "10", kg: "—", pct: "—", rpe: "6", note: "Здоровье ротаторов плеча." },  
+              { name: "Тяга верхнего блока нейтральным хватом", tag: "Широчайшие", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "Лопатки вниз, без отказа." }  
+            ]  
+          },  
+          D4: {  
+            title: "Сб · Тяга сумо (тяжёлая) + Жим (лёгкий, скорость)",  
+            exercises: [  
+              { name: "Тяга сумо · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 170, pct: "89%", rpe: "7", note: "Когда гриф прошёл колени — таз к грифу, ягодицы сжаты, фиксация 1 с.", isTop: true },  
+              { name: "Тяга · Бэк-оффы (−6% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 2, reps: "3", kg: 160, pct: "84%", rpe: "7–7.5", note: "Жёсткое удержание нейтрали и довод таза." },  
+              { name: "Жим с паузой 2 с (скорость)", tag: "Скорость", tagType: "tag-bo", sets: 4, reps: "3", kg: 97.5, pct: "80%", rpe: "5–5.5", note: "Быстрый взрыв после честной паузы 2 с." },  
+              { name: "Горизонтальная тяга блока / Т-грифа", tag: "Верх спины", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "Укрепление широчайших для удержания грифа у ног." },  
+              { name: "Hip Thrust", tag: "Локаут", tagType: "tag-acc", sets: 3, reps: "6", kg: "—", pct: "—", rpe: "7", note: "Дожим ягодицами." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "20 м", kg: 24, pct: "—", rpe: "—", note: "Давление живота держим весь проход." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "5", kg: 12, pct: "—", rpe: "—", note: "2×5 на каждую руку." }  
+            ]  
+          }  
+        }  
+      },  
+      W2: {  
+        rpe: "W2 · Накопление объёма (RPE 7.5–8.5)",  
+        desc: "Добавляем подходы в бэк-оффах, топ-сеты растут на 2.5–5 кг.",  
+        days: {  
+          D1: {  
+            title: "Пн · Присед (объём) + Узкий жим (объём)",  
+            exercises: [  
+              { name: "Присед (лоу-бар)", tag: "Объём", tagType: "tag-bo", sets: 3, reps: "5", kg: 120, pct: "80%", rpe: "7.5–8", note: "+2.5 кг к объёмному приседу прошлой недели." },  
+              { name: "Узкий жим (хват на ширину плеч)", tag: "Объём", tagType: "tag-bo", sets: 4, reps: "5", kg: 85, pct: "—", rpe: "7", note: "Мягкая фиксация 0.5–1 с на груди." },  
+              { name: "Тяга гантели с упором грудью", tag: "Спина", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "Плотная работа спины." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "30 м", kg: 24, pct: "—", rpe: "—", note: "Дистанция растёт до 30 м." }  
+            ]  
+          },  
+          D2: {  
+            title: "Вт · Тяга сумо (объём) + Глубокий присед + Гири",  
+            exercises: [  
+              { name: "Тяга сумо", tag: "Объём", tagType: "tag-bo", sets: 4, reps: "3", kg: 162.5, pct: "86%", rpe: "7.5–8", note: "4 рабочих подхода по 3 повторения.", isTop: true },  
+              { name: "Глубокий присед (после сумо)", tag: "Техника", tagType: "tag-acc", sets: 2, reps: "3", kg: 97.5, pct: "—", rpe: "6", note: "Отдых после сумо 3 мин. Контроль глубины и коленей." },  
+              { name: "Heavy Swings", tag: "Локаут", tagType: "tag-acc", sets: 5, reps: "10", kg: 24, pct: "—", rpe: "—", note: "Объём махов растёт до 5×10." },  
+              { name: "Гиперэкстензия 45° (пауза 2 с наверху)", tag: "Разгибатели", tagType: "tag-acc", sets: 3, reps: "8", kg: "+5 кг", pct: "—", rpe: "—", note: "Пауза 2 с наверху." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "6", kg: 12, pct: "—", rpe: "—", note: "3×6 с гирей 12 кг." }  
+            ]  
+          },  
+          D3: {  
+            title: "Чт · Присед (тяжёлый) + Жим с паузой (тяжёлый)",  
+            exercises: [  
+              { name: "Присед (лоу-бар) · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 137.5, pct: "92%", rpe: "7.5–8", note: "Шаг +5 кг к топ-сету W1 (база 150 кг).", isTop: true },  
+              { name: "Присед · Бэк-оффы (−9% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 4, reps: "4", kg: 125, pct: "83%", rpe: "7.5–8", note: "Пиковый объём: 4 подхода по 4 на 125 кг." },  
+              { name: "Жим с паузой 2 с · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 112.5, pct: "92%", rpe: "8", note: "Если 112.5 кг идёт на RPE ≥ 9 — бэк-оффы на 2.5 кг легче.", isTop: true },  
+              { name: "Жим · Бэк-оффы (−11% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 4, reps: "4", kg: 100, pct: "82%", rpe: "7.5–8", note: "4 подхода по 4 с паузой 2 с." },  
+              { name: "Лицевая тяга (резина/блок)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "10", kg: "—", pct: "—", rpe: "6", note: "3×10." },  
+              { name: "Тяга верхнего блока нейтральным хватом", tag: "Широчайшие", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "3×8." }  
+            ]  
+          },  
+          D4: {  
+            title: "Сб · Тяга сумо (тяжёлая) + Жим (лёгкий, скорость)",  
+            exercises: [  
+              { name: "Тяга сумо · Топ-сет", tag: "Топ-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 175, pct: "92%", rpe: "8", note: "Выборка люфта, фиксация локаута 1 с.", isTop: true },  
+              { name: "Тяга · Бэк-оффы (−9% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 3, reps: "3", kg: 160, pct: "84%", rpe: "7.5", note: "3 подхода по 3 на 160 кг." },  
+              { name: "Жим с паузой 2 с (скорость)", tag: "Скорость", tagType: "tag-bo", sets: 4, reps: "3", kg: 100, pct: "82%", rpe: "6", note: "Чёткая пауза 2 с и взрывной подъём." },  
+              { name: "Горизонтальная тяга блока / Т-грифа", tag: "Верх спины", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7.5", note: "Плотный верх спины." },  
+              { name: "Hip Thrust", tag: "Локаут", tagType: "tag-acc", sets: 3, reps: "6", kg: "—", pct: "—", rpe: "7", note: "3×6." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "30 м", kg: 24, pct: "—", rpe: "—", note: "3×30 м." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "6", kg: 12, pct: "—", rpe: "—", note: "2×6." }  
+            ]  
+          }  
+        }  
+      },  
+      W3: {  
+        rpe: "W3 · Пик блока (RPE 8.5–9.5)",  
+        desc: "Самые тяжёлые топ-сеты блока при сниженном объёме повторений.",  
+        days: {  
+          D1: {  
+            title: "Пн · Присед (объём) + Узкий жим (объём)",  
+            exercises: [  
+              { name: "Присед (лоу-бар)", tag: "Объём", tagType: "tag-bo", sets: 3, reps: "4", kg: 122.5, pct: "82%", rpe: "7–7.5", note: "3×4 с запасом перед четверговым пиком." },  
+              { name: "Узкий жим (хват на ширину плеч)", tag: "Объём", tagType: "tag-bo", sets: 4, reps: "4", kg: 87.5, pct: "—", rpe: "7", note: "4×4 с мягкой фиксацией на груди." },  
+              { name: "Тяга гантели с упором грудью", tag: "Спина", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "3×8." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "40 м", kg: 24, pct: "—", rpe: "—", note: "Максимальная дистанция 40 м." }  
+            ]  
+          },  
+          D2: {  
+            title: "Вт · Тяга сумо (объём) + Глубокий присед + Гири",  
+            exercises: [  
+              { name: "Тяга сумо", tag: "Объём", tagType: "tag-bo", sets: 3, reps: "3", kg: 162.5, pct: "86%", rpe: "7.5", note: "3×3 для сохранения свежести к субботнему пику.", isTop: true },  
+              { name: "Глубокий присед (после сумо)", tag: "Техника", tagType: "tag-acc", sets: 2, reps: "3", kg: 100, pct: "—", rpe: "6.5–7", note: "2×3 по 100 кг, чистая глубина." },  
+              { name: "Heavy Swings (с резиной или одной рукой)", tag: "Локаут", tagType: "tag-acc", sets: 3, reps: "5–8", kg: 24, pct: "—", rpe: "—", note: "Без разворота корпуса, мощный дожим ягодицами." },  
+              { name: "Гиперэкстензия 45° (пауза 2 с наверху)", tag: "Разгибатели", tagType: "tag-acc", sets: 3, reps: "8", kg: "+10 кг", pct: "—", rpe: "—", note: "Пауза 2 с наверху." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "4", kg: 16, pct: "—", rpe: "—", note: "Гиря 16 кг." }  
+            ]  
+          },  
+          D3: {  
+            title: "Чт · Присед (пик) + Жим с паузой (пик)",  
+            exercises: [  
+              { name: "Присед (лоу-бар) · Топ-сет", tag: "Пик-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 142.5, pct: "95%", rpe: "8.5–9", note: "При RPE ≤ 8 — один добавочный сингл 145 кг, бэк-оффы по плану.", isTop: true },  
+              { name: "Присед · Бэк-оффы (−9% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 4, reps: "3", kg: 130, pct: "87%", rpe: "8", note: "4×3 на 130 кг (87% от базы 150 кг)." },  
+              { name: "Жим с паузой 2 с · Топ-сет", tag: "Пик-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 115, pct: "94%", rpe: "8.5", note: "При RPE ≤ 8 — один добавочный сингл 117.5 кг (максимум +2.5).", isTop: true },  
+              { name: "Жим · Бэк-оффы (−9% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 4, reps: "3", kg: 105, pct: "86%", rpe: "8", note: "4×3 на 105 кг с паузой 2 с." },  
+              { name: "Лицевая тяга (резина/блок)", tag: "Плечи", tagType: "tag-acc", sets: 3, reps: "10", kg: "—", pct: "—", rpe: "6", note: "3×10." },  
+              { name: "Тяга верхнего блока нейтральным хватом", tag: "Широчайшие", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7", note: "3×8." }  
+            ]  
+          },  
+          D4: {  
+            title: "Сб · Тяга сумо (пик) + Жим (лёгкий, скорость)",  
+            exercises: [  
+              { name: "Тяга сумо · Топ-сет", tag: "Пик-сингл", tagType: "tag-top", sets: 1, reps: "1", kg: 182.5, pct: "96%", rpe: "9", note: "Потолок блока — 182.5 кг. При RPE ≤ 8.5 — сингл 185 кг и стоп; 190+ после делида.", isTop: true },  
+              { name: "Тяга · Бэк-оффы (−12% от топа)", tag: "Накопление", tagType: "tag-bo", sets: 2, reps: "3", kg: 160, pct: "84%", rpe: "7.5–8", note: "2×3 на 160 кг." },  
+              { name: "Жим с паузой 2 с (скорость)", tag: "Скорость", tagType: "tag-bo", sets: 4, reps: "3", kg: 100, pct: "82%", rpe: "6", note: "4×3 быстро и технично." },  
+              { name: "Горизонтальная тяга блока / Т-грифа", tag: "Верх спины", tagType: "tag-acc", sets: 3, reps: "8", kg: "—", pct: "—", rpe: "7.5", note: "3×8." },  
+              { name: "Hip Thrust", tag: "Локаут", tagType: "tag-acc", sets: 3, reps: "6", kg: "—", pct: "—", rpe: "7", note: "3×6." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 3, reps: "40 м", kg: 24, pct: "—", rpe: "—", note: "3×40 м." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "4", kg: 16, pct: "—", rpe: "—", note: "2×4 с гирей 16 кг." }  
+            ]  
+          }  
+        }  
+      },  
+      W4: {  
+        rpe: "W4 · Делид (RPE 5–6, объём −40% к W3)",  
+        desc: "Свежесть и техника: повторений на 38–42% меньше. Если хочется добавить вес — не добавляем!",  
+        days: {  
+          D1: {  
+            title: "Пн · Делид: Присед + Узкий жим",  
+            exercises: [  
+              { name: "Присед (лоу-бар)", tag: "Делид", tagType: "tag-bo", sets: 1, reps: "5", kg: 112.5, pct: "75%", rpe: "5.5–6", note: "Один лёгкий технический подход." },  
+              { name: "Узкий жим (хват на ширину плеч)", tag: "Делид", tagType: "tag-bo", sets: 3, reps: "4", kg: 82.5, pct: "—", rpe: "5", note: "3×4 легко." },  
+              { name: "Тяга гантели с упором грудью", tag: "Спина", tagType: "tag-acc", sets: 2, reps: "8", kg: "—", pct: "—", rpe: "5–6", note: "2×8." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 2, reps: "20 м", kg: 24, pct: "—", rpe: "—", note: "2×20 м." }  
+            ]  
+          },  
+          D2: {  
+            title: "Вт · Делид: Сумо + Глубокий присед + Гири",  
+            exercises: [  
+              { name: "Тяга сумо", tag: "Делид", tagType: "tag-bo", sets: 2, reps: "3", kg: 150, pct: "79%", rpe: "5–5.5", note: "2×3 на скорость.", isTop: true },  
+              { name: "Глубокий присед (после сумо)", tag: "Делид", tagType: "tag-acc", sets: 2, reps: "3", kg: 95, pct: "—", rpe: "5", note: "2×3." },  
+              { name: "Heavy Swings", tag: "Локаут", tagType: "tag-acc", sets: 3, reps: "8", kg: 24, pct: "—", rpe: "—", note: "3×8." },  
+              { name: "Гиперэкстензия 45° (пауза 2 с наверху)", tag: "Разгибатели", tagType: "tag-acc", sets: 2, reps: "8", kg: "Вес тела", pct: "—", rpe: "—", note: "2×8." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "5", kg: 12, pct: "—", rpe: "—", note: "2×5 (12 кг)." }  
+            ]  
+          },  
+          D3: {  
+            title: "Чт · Делид: Присед и Жим (тонус)",  
+            exercises: [  
+              { name: "Присед (лоу-бар) · Топ-сет", tag: "Делид", tagType: "tag-top", sets: 1, reps: "1", kg: 127.5, pct: "85%", rpe: "5.5", note: "Быстрый сингл.", isTop: true },  
+              { name: "Присед · Бэк-оффы (−6% от топа)", tag: "Делид", tagType: "tag-bo", sets: 2, reps: "3", kg: 120, pct: "80%", rpe: "5–5.5", note: "2×3." },  
+              { name: "Жим с паузой 2 с · Топ-сет", tag: "Делид", tagType: "tag-top", sets: 1, reps: "1", kg: 105, pct: "86%", rpe: "5.5–6", note: "Быстрый сингл.", isTop: true },  
+              { name: "Жим · Бэк-оффы (−7% от топа)", tag: "Делид", tagType: "tag-bo", sets: 2, reps: "3", kg: 97.5, pct: "80%", rpe: "5–5.5", note: "2×3." },  
+              { name: "Лицевая тяга (резина/блок)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "10", kg: "—", pct: "—", rpe: "5", note: "2×10." },  
+              { name: "Тяга верхнего блока нейтральным хватом", tag: "Широчайшие", tagType: "tag-acc", sets: 2, reps: "8", kg: "—", pct: "—", rpe: "5–6", note: "2×8." }  
+            ]  
+          },  
+          D4: {  
+            title: "Сб · Делид: Сумо + Скоростной Жим",  
+            exercises: [  
+              { name: "Тяга сумо · Топ-сет", tag: "Делид", tagType: "tag-top", sets: 1, reps: "1", kg: 162.5, pct: "86%", rpe: "5.5–6", note: "Суперкомпенсация перед тестом 200 кг.", isTop: true },  
+              { name: "Тяга · Бэк-оффы (−6% от топа)", tag: "Делид", tagType: "tag-bo", sets: 1, reps: "3", kg: 152.5, pct: "80%", rpe: "5.5", note: "1×3." },  
+              { name: "Жим с паузой 2 с (скорость)", tag: "Делид", tagType: "tag-bo", sets: 2, reps: "3", kg: 97.5, pct: "80%", rpe: "5", note: "2×3." },  
+              { name: "Горизонтальная тяга блока", tag: "Верх спины", tagType: "tag-acc", sets: 2, reps: "8", kg: "—", pct: "—", rpe: "5–6", note: "2×8." },  
+              { name: "Hip Thrust", tag: "Локаут", tagType: "tag-acc", sets: 2, reps: "6", kg: "—", pct: "—", rpe: "5–6", note: "2×6." },  
+              { name: "Suitcase Carry (на сторону)", tag: "Гиря", tagType: "tag-acc", sets: 2, reps: "20 м", kg: 24, pct: "—", rpe: "—", note: "2×20 м." },  
+              { name: "Bottoms-up Press (на сторону)", tag: "Плечи", tagType: "tag-acc", sets: 2, reps: "5", kg: 12, pct: "—", rpe: "—", note: "2×5." }  
+            ]  
+          }  
+        }  
+      }  
+    };  
+  
+    let appState = SafeStorage.load();  
+  
+    function saveState() {  
+      SafeStorage.save(appState);  
+    }  
+  
+    function round25(val) {  
+      return Math.round(val / 2.5) * 2.5;  
+    }  
+  
+    function getWarmupHTML(targetKg) {  
+      if (typeof targetKg !== 'number') return '';  
+      const steps = [  
+        { pct: 0.40, reps: 5 },  
+        { pct: 0.60, reps: 3 },  
+        { pct: 0.75, reps: 2 },  
+        { pct: 0.85, reps: 1 },  
+        { pct: 0.92, reps: 1 }  
+      ];  
+      return steps.map(s => `<span class="w-chip">${round25(targetKg * s.pct)} кг × ${s.reps}</span>`).join('');  
+    }  
+  
+    function renderApp() {  
+      const w = appState.week;  
+      const d = appState.day;  
+      const wData = programData[w];  
+      const dData = wData.days[d];  
+  
+      document.querySelectorAll('#week-tabs .seg-btn').forEach(btn => {  
+        const isAct = btn.getAttribute('data-week') === w;  
+        btn.classList.toggle('active', isAct);  
+        btn.classList.toggle('w-active', isAct);  
+      });  
+      document.querySelectorAll('#day-tabs .seg-btn').forEach(btn => {  
+        const isAct = btn.getAttribute('data-day') === d;  
+        btn.classList.toggle('active', isAct);  
+      });  
+  
+      document.getElementById('banner-rpe').textContent = wData.rpe;  
+      document.getElementById('banner-day-code').textContent = `${w} · ${d}`;  
+      document.getElementById('banner-title').textContent = dData.title;  
+      document.getElementById('banner-desc').textContent = wData.desc;  
+  
+      const listEl = document.getElementById('exercises-list');  
+      listEl.innerHTML = '';  
+  
+      let totalSets = 0;  
+      let doneSets = 0;  
+  
+      dData.exercises.forEach((ex, exIdx) => {  
+        totalSets += ex.sets;  
+        let exDoneCount = 0;  
+        let setsHTML = '';  
+  
+        for (let s = 1; s <= ex.sets; s++) {  
+          const setKey = `${w}_${d}_ex${exIdx}_s${s}`;  
+          const isChecked = !!appState.checks[setKey];  
+          if (isChecked) {  
+            doneSets++;  
+            exDoneCount++;  
+          }  
+          setsHTML += `<button type="button" class="set-pill ${isChecked ? 'checked' : ''}" data-setkey="${setKey}">Сет ${s} · ${ex.reps}</button>`;  
+        }  
+  
+        const logKey = `${w}_${d}_ex${exIdx}`;  
+        const savedLog = appState.logs[logKey] || { kg: '', rpe: '' };  
+        const wuKey = `${w}_${d}_wu_${exIdx}`;  
+        const isWuOpen = !!appState.openWarmups[wuKey];  
+  
+        const allExDone = exDoneCount === ex.sets;  
+        const warmupSection = ex.isTop && typeof ex.kg === 'number' ? `  
+          <button type="button" class="warmup-toggle" data-wukey="${wuKey}">⚡ Разминка к ${ex.kg} кг</button>  
+          <div class="warmup-chips ${isWuOpen ? 'open' : ''}">${getWarmupHTML(ex.kg)}</div>  
+        ` : '';  
+  
+        const card = document.createElement('div');  
+        card.className = `ex-card ${allExDone ? 'done-card' : ''}`;  
+        card.innerHTML = `  
+          <div class="ex-header">  
+            <div class="ex-title">${ex.name}</div>  
+            <span class="ex-tag ${ex.tagType}">${ex.tag}</span>  
+          </div>  
+          <div class="ex-metrics">  
+            <div class="metric-box">  
+              <span class="metric-label">Подх×Повт</span>  
+              <span class="metric-val">${ex.sets}×${ex.reps}</span>  
+            </div>  
+            <div class="metric-box">  
+              <span class="metric-label">Вес (кг)</span>  
+              <span class="metric-val highlight">${ex.kg}</span>  
+            </div>  
+            <div class="metric-box">  
+              <span class="metric-label">% e1RM</span>  
+              <span class="metric-val">${ex.pct}</span>  
+            </div>  
+            <div class="metric-box">  
+              <span class="metric-label">План RPE</span>  
+              <span class="metric-val">${ex.rpe}</span>  
+            </div>  
+          </div>  
+          <div class="ex-note">${ex.note}</div>  
+          <div class="fact-log-row">  
+            <div class="fact-input-wrap">  
+              <label>Факт Кг:</label>  
+              <input type="text" inputmode="decimal" placeholder="${ex.kg}" value="${savedLog.kg || ''}" data-logkey="${logKey}" data-field="kg">  
+            </div>  
+            <div class="fact-input-wrap">  
+              <label>Факт RPE:</label>  
+              <input type="text" inputmode="decimal" placeholder="${ex.rpe}" value="${savedLog.rpe || ''}" data-logkey="${logKey}" data-field="rpe">  
+            </div>  
+          </div>  
+          ${warmupSection}  
+          <div class="sets-row">${setsHTML}</div>  
+        `;  
+        listEl.appendChild(card);  
+      });  
+  
+      const pctDone = totalSets > 0 ? Math.round((doneSets / totalSets) * 100) : 0;  
+      document.getElementById('day-progress-fill').style.width = `${pctDone}%`;  
+      document.getElementById('day-progress-text').textContent = `${pctDone}%`;  
+  
+      const dayNoteKey = `${w}_${d}`;  
+      document.getElementById('day-notes-input').value = appState.notes[dayNoteKey] || '';  
+    }  
+  
+    document.addEventListener('click', function(e) {  
+      const weekBtn = e.target.closest('[data-week]');  
+      if (weekBtn) {  
+        appState.week = weekBtn.getAttribute('data-week');  
+        saveState();  
+        renderApp();  
+        return;  
+      }  
+  
+      const dayBtn = e.target.closest('[data-day]');  
+      if (dayBtn) {  
+        appState.day = dayBtn.getAttribute('data-day');  
+        saveState();  
+        renderApp();  
+        return;  
+      }  
+  
+      const setBtn = e.target.closest('[data-setkey]');  
+      if (setBtn) {  
+        const k = setBtn.getAttribute('data-setkey');  
+        if (appState.checks[k]) {  
+          delete appState.checks[k];  
+        } else {  
+          appState.checks[k] = true;  
+        }  
+        saveState();  
+        renderApp();  
+        return;  
+      }  
+  
+      const wuBtn = e.target.closest('[data-wukey]');  
+      if (wuBtn) {  
+        const wk = wuBtn.getAttribute('data-wukey');  
+        if (appState.openWarmups[wk]) {  
+          delete appState.openWarmups[wk];  
+        } else {  
+          appState.openWarmups[wk] = true;  
+        }  
+        saveState();  
+        renderApp();  
+        return;  
+      }  
+  
+      const tabBtn = e.target.closest('[data-view]');  
+      if (tabBtn) {  
+        const viewName = tabBtn.getAttribute('data-view');  
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));  
+        document.getElementById(`view-${viewName}`).classList.add('active');  
+        document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));  
+        tabBtn.classList.add('active');  
+        window.scrollTo({ top: 0, behavior: 'smooth' });  
+        return;  
+      }  
+  
+      const timerBtn = e.target.closest('[data-sec]');  
+      if (timerBtn) {  
+        startTimer(parseInt(timerBtn.getAttribute('data-sec'), 10));  
+        return;  
+      }  
+    });  
+  
+    document.addEventListener('input', function(e) {  
+      const t = e.target;  
+      if (t.matches('[data-logkey]')) {  
+        const lk = t.getAttribute('data-logkey');  
+        const field = t.getAttribute('data-field');  
+        if (!appState.logs[lk]) appState.logs[lk] = { kg: '', rpe: '' };  
+        appState.logs[lk][field] = t.value;  
+        saveState();  
+      } else if (t.id === 'day-notes-input') {  
+        const dayNoteKey = `${appState.week}_${appState.day}`;  
+        appState.notes[dayNoteKey] = t.value;  
+        saveState();  
+      } else if (t.id === 'calc-input') {  
+        updateWarmupCalc();  
+      }  
+    });  
+  
+    function updateWarmupCalc() {  
+      const val = parseFloat(document.getElementById('calc-input').value) || 100;  
+      appState.calcWeight = val;  
+      saveState();  
+      document.getElementById('calc-output').innerHTML = getWarmupHTML(val);  
+    }  
+  
+    // Wall-Clock Accurate Timer (Date.now() — immune to iOS screen lock)  
+    let timerInterval = null;  
+  
+    function formatTime(sec) {  
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');  
+      const s = String(sec % 60).padStart(2, '0');  
+      return `${m}:${s}`;  
+    }  
+  
+    function tickTimer() {  
+      const disp = document.getElementById('timer-val');  
+      if (!appState.timerEndTime) {  
+        disp.classList.remove('active-timer');  
+        disp.textContent = "00:00";  
+        clearInterval(timerInterval);  
+        return;  
+      }  
+      const diffSec = Math.ceil((appState.timerEndTime - Date.now()) / 1000);  
+      if (diffSec <= 0) {  
+        appState.timerEndTime = null;  
+        saveState();  
+        clearInterval(timerInterval);  
+        disp.classList.add('active-timer');  
+        disp.textContent = "ГОТОВ!";  
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);  
+      } else {  
+        disp.classList.add('active-timer');  
+        disp.textContent = formatTime(diffSec);  
+      }  
+    }  
+  
+    function startTimer(seconds) {  
+      clearInterval(timerInterval);  
+      appState.timerEndTime = Date.now() + seconds * 1000;  
+      saveState();  
+      tickTimer();  
+      timerInterval = setInterval(tickTimer, 250);  
+    }  
+  
+    document.addEventListener('visibilitychange', function() {  
+      if (!document.hidden && appState.timerEndTime) {  
+        tickTimer();  
+      }  
+    });  
+  
+    document.getElementById('btn-timer-stop').addEventListener('click', function() {  
+      clearInterval(timerInterval);  
+      appState.timerEndTime = null;  
+      saveState();  
+      const disp = document.getElementById('timer-val');  
+      disp.classList.remove('active-timer');  
+      disp.textContent = "00:00";  
+    });  
+  
+    document.getElementById('btn-print').addEventListener('click', function() {  
+      window.print();  
+    });  
+  
+    document.getElementById('btn-calc').addEventListener('click', updateWarmupCalc);  
+  
+    // Backup Export / Import (with Default Merging) / Single-Key Reset  
+    document.getElementById('btn-export').addEventListener('click', function() {  
+      const area = document.getElementById('backup-textarea');  
+      const jsonStr = JSON.stringify(appState);  
+      area.value = jsonStr;  
+      area.select();  
+      if (navigator.clipboard) navigator.clipboard.writeText(jsonStr);  
+      flashSaveIndicator("● Бэкап скопирован ✓");  
+    });  
+  
+    document.getElementById('btn-import').addEventListener('click', function() {  
+      const area = document.getElementById('backup-textarea');  
+      try {  
+        const parsed = JSON.parse(area.value);  
+        if (!parsed || typeof parsed !== 'object') throw new Error("Invalid object");  
+        appState = normalizeState(parsed);  
+        saveState();  
+        document.getElementById('calc-input').value = appState.calcWeight;  
+        renderApp();  
+        updateWarmupCalc();  
+        flashSaveIndicator("● Бэкап восстановлен ✓");  
+      } catch (err) {  
+        alert("Ошибка формата JSON. Проверь скопированный текст.");  
+      }  
+    });  
+  
+    document.getElementById('btn-reset').addEventListener('click', function() {  
+      if (confirm("Очистить сохранённые подходы и заметки только для Цикла V2?")) {  
+        clearInterval(timerInterval);  
+        SafeStorage.removeOnlyThisApp();  
+        appState = SafeStorage.load();  
+        document.getElementById('calc-input').value = appState.calcWeight;  
+        renderApp();  
+        updateWarmupCalc();  
+        flashSaveIndicator("● Прогресс Цикла V2 сброшен");  
+      }  
+    });  
+  
+    // Offline Service Worker Registration (for HTTPS GitHub Pages)  
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {  
+      const swCode = `  
+        const CACHE_NAME = 'tr-v2-cache-v1';  
+        self.addEventListener('install', e => {  
+          e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./'])));  
+          self.skipWaiting();  
+        });  
+        self.addEventListener('fetch', e => {  
+          e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));  
+        });  
+      `;  
+      const blob = new Blob([swCode], { type: 'application/javascript' });  
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});  
+    }  
+  
+    // Initialize App  
+    document.getElementById('calc-input').value = appState.calcWeight;  
+    renderApp();  
+    updateWarmupCalc();  
+    if (appState.timerEndTime) {  
+      tickTimer();  
+      timerInterval = setInterval(tickTimer, 250);  
+    }  
+  </script>  
+</body>  
+</html>  
